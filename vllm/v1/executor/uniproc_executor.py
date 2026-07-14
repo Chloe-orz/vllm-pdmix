@@ -127,6 +127,22 @@ class UniProcExecutor(Executor):
     def take_draft_token_ids(self) -> DraftTokenIds | None:
         return self.collective_rpc("take_draft_token_ids", single_value=True)
 
+    def take_pending_mtp_draft_scheduler_output(
+        self,
+    ) -> SchedulerOutput | None:
+        return self.collective_rpc(
+            "take_pending_mtp_draft_scheduler_output",
+            single_value=True,
+        )
+
+    def take_completed_mtp_draft_result(
+        self,
+    ) -> tuple[DraftTokenIds, SchedulerOutput] | None:
+        return self.collective_rpc(
+            "take_completed_mtp_draft_result",
+            single_value=True,
+        )
+
     def check_health(self) -> None:
         # UniProcExecutor will always be healthy as long as
         # it's running.

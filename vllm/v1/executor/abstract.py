@@ -253,6 +253,22 @@ class Executor(ABC):
         output: list[DraftTokenIds] = self.collective_rpc("take_draft_token_ids")
         return output[0]
 
+    def take_pending_mtp_draft_scheduler_output(
+        self,
+    ) -> SchedulerOutput | None:
+        output: list[SchedulerOutput | None] = self.collective_rpc(
+            "take_pending_mtp_draft_scheduler_output"
+        )
+        return output[0]
+
+    def take_completed_mtp_draft_result(
+        self,
+    ) -> tuple[DraftTokenIds, SchedulerOutput] | None:
+        output: list[tuple[DraftTokenIds, SchedulerOutput] | None] = (
+            self.collective_rpc("take_completed_mtp_draft_result")
+        )
+        return output[0]
+
     @property
     def max_concurrent_batches(self) -> int:
         return 1

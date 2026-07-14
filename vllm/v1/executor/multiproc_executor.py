@@ -403,6 +403,24 @@ class MultiprocExecutor(Executor):
             "take_draft_token_ids", unique_reply_rank=self.output_rank
         )
 
+    def take_pending_mtp_draft_scheduler_output(
+        self,
+    ) -> SchedulerOutput | None:
+        # OPTIMIZATION: Get output only from a single worker (output_rank).
+        return self.collective_rpc(
+            "take_pending_mtp_draft_scheduler_output",
+            unique_reply_rank=self.output_rank,
+        )
+
+    def take_completed_mtp_draft_result(
+        self,
+    ) -> tuple[DraftTokenIds, SchedulerOutput] | None:
+        # OPTIMIZATION: Get output only from a single worker (output_rank).
+        return self.collective_rpc(
+            "take_completed_mtp_draft_result",
+            unique_reply_rank=self.output_rank,
+        )
+
     def collective_rpc(  # type: ignore[override]
         self,
         method: str | Callable,
