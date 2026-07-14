@@ -269,6 +269,12 @@ class Executor(ABC):
         )
         return output[0]
 
+    def clear_pending_mtp_draft_for_req_ids(self, req_ids: set[str]) -> None:
+        self.collective_rpc(
+            "clear_pending_mtp_draft_for_req_ids",
+            args=(list(req_ids),),
+        )
+
     @property
     def max_concurrent_batches(self) -> int:
         return 1

@@ -143,6 +143,12 @@ class UniProcExecutor(Executor):
             single_value=True,
         )
 
+    def clear_pending_mtp_draft_for_req_ids(self, req_ids: set[str]) -> None:
+        self.collective_rpc(
+            "clear_pending_mtp_draft_for_req_ids",
+            args=(list(req_ids),),
+        )
+
     def check_health(self) -> None:
         # UniProcExecutor will always be healthy as long as
         # it's running.

@@ -421,6 +421,12 @@ class MultiprocExecutor(Executor):
             unique_reply_rank=self.output_rank,
         )
 
+    def clear_pending_mtp_draft_for_req_ids(self, req_ids: set[str]) -> None:
+        self.collective_rpc(
+            "clear_pending_mtp_draft_for_req_ids",
+            args=(list(req_ids),),
+        )
+
     def collective_rpc(  # type: ignore[override]
         self,
         method: str | Callable,
