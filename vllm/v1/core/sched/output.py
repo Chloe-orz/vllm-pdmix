@@ -32,7 +32,6 @@ class HiddenChannelType(enum.Enum):
     PREFILL_1 = "prefill_1"
     PREFILL_2 = "prefill_2"
     DECODE = "decode"
-    MTP_DRAFT = "mtp_draft"
 
 
 class BatchType(enum.Enum):
