@@ -307,9 +307,16 @@ class SchedulerOutput:
 
     # Data-plane hidden tensor channel for edge-cloud PD separation. Prefill
     # head/tail batches use one of two prefill channels; decode uses the
-    # dedicated decode channel; Qwen-MTP draft uses the dedicated MTP draft
-    # channel. The cloud echoes this field back unchanged.
+    # dedicated decode channel; Qwen-MTP draft reuses the decode channel.
+    # The cloud echoes this field back unchanged.
     hidden_channel: HiddenChannelType | None = None
+
+    # Edge-side hint to cloud-side PassiveScheduler about whether layer slicing
+    # is worthwhile for this prefill batch. True = decode is (or will soon be)
+    # active on the cloud side, so interleaving slices with decode batches is
+    # profitable. False = cold-start / pure-prefill phase, skip slicing to avoid
+    # throttle and multi-dispatch overhead.
+    cloud_suggest_slicing: bool | None = None
 
     # Qwen-MTP draft control-plane identity. Each draft step uses its own
     # head_token for edge/cloud pairing; the fields below identify the parent
