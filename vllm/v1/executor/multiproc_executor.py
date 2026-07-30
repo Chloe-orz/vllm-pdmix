@@ -1116,7 +1116,6 @@ class WorkerProc:
                     if isinstance(method, bytes) and method == b"pp_scheduler_output":
                         scheduler_output = args[0]
                         slice_info = args[1] if len(args) > 1 else None
-<<<<<<< HEAD
                         _bt = (
                             scheduler_output.batch_type.value
                             if scheduler_output.batch_type is not None else "N/A"
@@ -1128,7 +1127,6 @@ class WorkerProc:
                                 _dt_deq,
                                 _bt,
                             )
-=======
 
                         dp_group = None
                         if model_parallel_is_initialized():
@@ -1153,7 +1151,6 @@ class WorkerProc:
                             batch_type_info,
                         )
 
->>>>>>> 61519dbfb (fix(vllm/dp): 修复分布式数据并行训练死锁与同步问题)
                         # Execute model with the received SchedulerOutput.
                         # PD-separation: route a dummy-middle
                         # (total_num_scheduled_tokens == 0, published by the edge's
