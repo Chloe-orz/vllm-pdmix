@@ -1120,6 +1120,11 @@ class WorkerProc:
                             scheduler_output.batch_type.value
                             if scheduler_output.batch_type is not None else "N/A"
                         )
+                        _seq = getattr(
+                            scheduler_output,
+                            "_passive_scheduler_arrival_seq", None,
+                        )
+
                         if _dt_deq > 1.0:
                             logger.info(
                                 "[CLOUD-WORKER-DEQUEUE] dequeue took %.3f ms "
@@ -1142,13 +1147,14 @@ class WorkerProc:
                         )
                         logger.info(
                             "[EDGE-DEQUEUE] DP info: loop_step: %d, rank=%d, rank_in_group=%d, "
-                            "world_size=%d, ranks=%s%s",
+                            "world_size=%d, ranks=%s seq=%s",
                             loop_step,
                             dp_group.rank if dp_group is not None else -1,
                             dp_group.rank_in_group if dp_group is not None else -1,
                             dp_group.world_size if dp_group is not None else -1,
                             dp_group.ranks if dp_group is not None else None,
                             batch_type_info,
+                            _seq,
                         )
 
                         # Execute model with the received SchedulerOutput.
