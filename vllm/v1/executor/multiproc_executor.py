@@ -1147,7 +1147,7 @@ class WorkerProc:
                         )
                         logger.info(
                             "[EDGE-DEQUEUE] DP info: loop_step: %d, rank=%d, rank_in_group=%d, "
-                            "world_size=%d, ranks=%s seq=%s",
+                            "world_size=%d, ranks=%s%s seq=%s",
                             loop_step,
                             dp_group.rank if dp_group is not None else -1,
                             dp_group.rank_in_group if dp_group is not None else -1,
