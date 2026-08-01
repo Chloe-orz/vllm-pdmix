@@ -1155,7 +1155,7 @@ class WorkerProc:
                             dp_group.ranks if dp_group is not None else None,
                             batch_type_info,
                             _seq,
-                            scheduler_output.original_seq.value,
+                            scheduler_output.original_seq,
                         )
 
                         # Execute model with the received SchedulerOutput.
@@ -1296,7 +1296,7 @@ class WorkerProc:
                         dp_group.world_size if dp_group is not None else -1,
                         dp_group.ranks if dp_group is not None else None,
                         batch_type_info,
-                        scheduler_output.original_seq.value,
+                        args[0].original_seq,
                     )
 
                 output = func(*args, **kwargs)
