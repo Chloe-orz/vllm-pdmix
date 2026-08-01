@@ -1147,7 +1147,7 @@ class WorkerProc:
                         )
                         logger.info(
                             "[EDGE-DEQUEUE] DP info: loop_step: %d, rank=%d, rank_in_group=%d, "
-                            "world_size=%d, ranks=%s%s seq=%s",
+                            "world_size=%d, ranks=%s%s seq=%s original_seq=%d",
                             loop_step,
                             dp_group.rank if dp_group is not None else -1,
                             dp_group.rank_in_group if dp_group is not None else -1,
@@ -1155,6 +1155,7 @@ class WorkerProc:
                             dp_group.ranks if dp_group is not None else None,
                             batch_type_info,
                             _seq,
+                            scheduler_output.original_seq.value,
                         )
 
                         # Execute model with the received SchedulerOutput.
@@ -1288,13 +1289,14 @@ class WorkerProc:
                     )
                     logger.info(
                         "[EDGE-DEQUEUE] DP info: loop_step: %d, rank=%d, rank_in_group=%d, "
-                        "world_size=%d, ranks=%s%s",
+                        "world_size=%d, ranks=%s%s original_seq=%d",
                         loop_step,
                         dp_group.rank if dp_group is not None else -1,
                         dp_group.rank_in_group if dp_group is not None else -1,
                         dp_group.world_size if dp_group is not None else -1,
                         dp_group.ranks if dp_group is not None else None,
                         batch_type_info,
+                        scheduler_output.original_seq.value,
                     )
 
                 output = func(*args, **kwargs)
