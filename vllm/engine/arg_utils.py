@@ -1747,6 +1747,17 @@ class EngineArgs:
         assert self.data_parallel_backend == "mp" or self.nnodes == 1, (
             "nnodes > 1 is only supported with data_parallel_backend=mp"
         )
+        logger.warning(
+            "[DPDEV] create_engine_config(raw CLI): dp_size=%s dp_size_local=%r "
+            "dp_start_rank=%r dp_rank=%r dp_external_lb=%s dp_hybrid_lb=%s "
+            "headless=%s nnodes=%s node_rank=%s enable_edge_cloud=%s "
+            "has_speculative=%s",
+            self.data_parallel_size, self.data_parallel_size_local,
+            self.data_parallel_start_rank, self.data_parallel_rank,
+            self.data_parallel_external_lb, self.data_parallel_hybrid_lb,
+            headless, self.nnodes, self.node_rank, self.enable_edge_cloud,
+            self.speculative_config is not None,
+        )
         inferred_data_parallel_rank = 0
         if self.nnodes > 1 and not self.enable_edge_cloud:
             world_size = (
@@ -1875,6 +1886,14 @@ class EngineArgs:
             model_config.skip_tokenizer_init = True
             logger.info("Skipping tokenizer initialization for tokens-only mode.")
 
+        logger.warning(
+            "[DPDEV] create_engine_config(resolved): dp_size_local=%r "
+            "dp_rank=%r dp_external_lb=%s dp_hybrid_lb=%s dp_size=%s "
+            "(passed to ParallelConfig)",
+            data_parallel_size_local, self.data_parallel_rank,
+            data_parallel_external_lb, self.data_parallel_hybrid_lb,
+            self.data_parallel_size,
+        )
         parallel_config = ParallelConfig(
             pipeline_parallel_size=self.pipeline_parallel_size,
             tensor_parallel_size=self.tensor_parallel_size,
