@@ -87,12 +87,20 @@ class AsyncIntermediateTensors(IntermediateTensors):
     def wait_for_comm(self) -> None:
         if self._comm_waited:
             return
+        import time as _ec_perf_time
+        import logging as _ec_perf_logging
+        _wc_t0 = _ec_perf_time.monotonic()
         if self._comm_handles:
             for handle in self._comm_handles:
                 handle.wait()
         if self._comm_postprocess:
             for fn in self._comm_postprocess:
                 fn()
+        _wc_dt_ms = (_ec_perf_time.monotonic() - _wc_t0) * 1000
+        _ec_perf_logging.getLogger("vllm").error(
+            "[EC-PERF][IRECV-WAIT] cross-node tensor wait=%.3fms handles=%s",
+            _wc_dt_ms, len(self._comm_handles or []),
+        )
         self._comm_waited = True
 
     def __getattribute__(self, name: str):
