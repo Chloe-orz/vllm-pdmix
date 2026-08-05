@@ -1296,7 +1296,7 @@ class WorkerProc:
                         dp_group.world_size if dp_group is not None else -1,
                         dp_group.ranks if dp_group is not None else None,
                         batch_type_info,
-                        args[0].original_seq if args and hasattr(args[0], "original_seq") else -1,
+                        args[0].original_seq if args and args[0].original_seq else -1,
                     )
 
                 output = func(*args, **kwargs)
