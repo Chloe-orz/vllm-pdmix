@@ -148,13 +148,6 @@ class CoreEngineProcManager:
                 )
             )
 
-        logger.warning(
-            "[DPDEV] CoreEngineProcManager.__init__: local_engine_count=%s "
-            "local_start_index=%s start_index=%s local_dp_ranks=%s is_dp=%s",
-            local_engine_count, local_start_index, start_index, local_dp_ranks,
-            is_dp,
-        )
-
         self._finalizer = weakref.finalize(self, shutdown, self.processes)
         self.manager_stopped = threading.Event()
         self.failed_proc_name: str | None = None
@@ -278,33 +271,12 @@ def set_device_control_env_var(
     # allocation is therefore always the first shard
     # (``local_dp_rank = 0``); non-zero local DP ranks share
     # the same NPU(s) through the single shared worker.
-    pc = vllm_config.parallel_config
-    local_dp_rank_in = local_dp_rank
-    edge_override = bool(pc.is_shared_model_edge and pc.is_edge_node)
-    if edge_override:
+    if (vllm_config.parallel_config.is_shared_model_edge
+            and vllm_config.parallel_config.is_edge_node):
         local_dp_rank = 0
-    world_size = pc.world_size
-    local_world_size = pc.local_world_size
+    world_size = vllm_config.parallel_config.world_size
+    local_world_size = vllm_config.parallel_config.local_world_size
     evar = current_platform.device_control_env_var
-    cur_vis = os.getenv(evar, "")
-    vis_n = (
-        len([x for x in cur_vis.split(",") if x.strip() != ""])
-        if cur_vis else 0
-    )
-
-    logger.warning(
-        "[DPDEV] set_device_control_env_var: evar=%s cur_vis=%r vis_n=%d "
-        "local_dp_rank(in)=%d edge_override=%s(shared_edge=%s edge_node=%s) "
-        "local_dp_rank(used)=%d world_size=%d local_world_size=%d "
-        "dp_rank=%s dp_rank_local=%r dp_size=%s dp_size_local=%s "
-        "enable_edge_cloud=%s",
-        evar, cur_vis, vis_n,
-        local_dp_rank_in, edge_override, pc.is_shared_model_edge,
-        pc.is_edge_node, local_dp_rank, world_size, local_world_size,
-        pc.data_parallel_rank, pc.data_parallel_rank_local,
-        pc.data_parallel_size, pc.data_parallel_size_local,
-        pc.enable_edge_cloud,
-    )
 
     value = get_device_indices(evar, local_dp_rank, world_size, local_world_size)
     with patch.dict(os.environ, values=((evar, value),)):
@@ -1039,17 +1011,6 @@ def launch_core_engines(
     local_engines_only = parallel_config.local_engines_only
 
     offline_mode = local_start_index is not None
-
-    logger.warning(
-        "[DPDEV] launch_core_engines: dp_size=%s local_engine_count=%s "
-        "local_start_index(raw dp_rank_local)=%r -> used=%d dp_rank=%s "
-        "enable_edge_cloud=%s shared_edge=%s edge_node=%s",
-        dp_size, local_engine_count, local_start_index,
-        local_start_index or 0, dp_rank,
-        parallel_config.enable_edge_cloud,
-        parallel_config.is_shared_model_edge,
-        parallel_config.is_edge_node,
-    )
 
     # Create a single tensor IPC queue for sharing multimodal tensors between
     # API servers and engine core. Returns a single queue since we only support
